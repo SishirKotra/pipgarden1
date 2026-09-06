@@ -278,20 +278,6 @@
   }
   .rule p { font-size: .93rem; color: var(--lav); }
 
-  /* ------------------------------------------------------ honest warning
-     Not hidden in small print. Someone who hits SmartScreen unprepared closes
-     the window and never comes back. */
-  .heads-up {
-    border: 2px solid var(--gold);
-    border-radius: 12px;
-    background: linear-gradient(180deg, rgba(255, 209, 102, .11), rgba(255, 209, 102, .04));
-    padding: 1.6rem 1.5rem;
-    display: grid; gap: 1rem;
-  }
-  .heads-up h3 { color: var(--gold); font-family: var(--pixel); font-size: .78rem; line-height: 1.5; }
-  .heads-up p { color: var(--lav); font-size: .95rem; }
-  .steps { margin: 0; padding-left: 1.15rem; display: grid; gap: .45rem; color: var(--lav); font-size: .95rem; }
-  .steps b { color: var(--cream); font-weight: 600; }
 
   /* ---------------------------------------------------------------- specs */
   .specs { display: grid; gap: 0; border: 2px solid var(--edge); border-radius: 12px; overflow: hidden; }
@@ -310,38 +296,6 @@
   .spec dd b { color: var(--cream); font-weight: 600; }
   @media (max-width: 34rem) { .spec { grid-template-columns: 1fr; gap: .35rem; } }
 
-  /* ---------------------------------------------------------------- camera */
-  .optional {
-    display: grid; gap: 1.75rem;
-    grid-template-columns: minmax(0, 1fr);
-    align-items: start;
-  }
-  @media (min-width: 56rem) { .optional { grid-template-columns: minmax(0, 1fr) minmax(18rem, 22rem); } }
-
-  pre {
-    margin: 0;
-    background: var(--sunk);
-    border: 2px solid var(--edge);
-    border-radius: 10px;
-    padding: 1.1rem 1.2rem;
-    overflow-x: auto;
-    font-size: .84rem;
-    line-height: 1.75;
-    color: var(--mint-lit);
-    font-family: ui-monospace, "Cascadia Code", "Consolas", monospace;
-  }
-  pre .c { color: var(--dim); }
-
-  .rate {
-    border: 2px solid var(--edge); border-radius: 12px;
-    background: var(--panel); overflow: hidden;
-  }
-  .rate-row { display: flex; justify-content: space-between; gap: 1rem; padding: .95rem 1.2rem; align-items: baseline; }
-  .rate-row + .rate-row { border-top: 2px solid var(--edge); }
-  .rate-row span { font-size: .9rem; color: var(--lav); }
-  .rate-row b { font-family: var(--pixel); font-size: .72rem; font-variant-numeric: tabular-nums; }
-  .rate-row.full b { color: var(--mint-lit); }
-  .rate-row.reduced b { color: var(--gold); }
 
   /* ---------------------------------------------------------------- footer */
   footer {
@@ -366,28 +320,27 @@
     <header>
       <div class="brand">
         <!-- The app's own Pip, drawn at 1:1 with the same palette as the icon. -->
-        <svg width="40" height="40" viewBox="0 0 32 32" shape-rendering="crispEdges" aria-hidden="true">
-          <g fill="#251a3b">
-            <rect x="6" y="12" width="20" height="2"/><rect x="4" y="14" width="24" height="12"/>
-            <rect x="6" y="26" width="20" height="2"/>
-          </g>
-          <g fill="#7c62b0"><rect x="6" y="14" width="20" height="11"/></g>
-          <g fill="#a184d4"><rect x="7" y="14" width="14" height="4"/></g>
-          <g fill="#cbb8f0"><rect x="9" y="15" width="4" height="1"/><rect x="9" y="16" width="3" height="1"/></g>
-          <g fill="#ffffff">
-            <rect x="8" y="17" width="4" height="5"/><rect x="7" y="18" width="1" height="3"/><rect x="12" y="18" width="1" height="3"/>
-            <rect x="19" y="17" width="4" height="5"/><rect x="18" y="18" width="1" height="3"/><rect x="23" y="18" width="1" height="3"/>
-          </g>
-          <g fill="#201b2e">
-            <rect x="9" y="18" width="2" height="3"/><rect x="20" y="18" width="2" height="3"/>
-          </g>
-          <g fill="#ffffff"><rect x="9" y="18" width="1" height="1"/><rect x="20" y="18" width="1" height="1"/></g>
-          <g fill="#ff8fa8"><rect x="5" y="22" width="2" height="1"/><rect x="25" y="22" width="2" height="1"/></g>
-          <g fill="#201b2e"><rect x="15" y="23" width="2" height="1"/><rect x="14" y="22" width="1" height="1"/><rect x="17" y="22" width="1" height="1"/></g>
-          <g fill="#ffd166">
-            <rect x="4" y="4" width="1" height="5"/><rect x="2" y="6" width="5" height="1"/>
-            <rect x="26" y="2" width="1" height="5"/><rect x="24" y="4" width="5" height="1"/>
-          </g>
+        <svg width="42" height="42" viewBox="0 0 32 32" shape-rendering="crispEdges" aria-hidden="true">
+          <!-- halo -->
+          <g fill="#f0c860"><rect x="11" y="3" width="10" height="1"/><rect x="11" y="6" width="10" height="1"/><rect x="10" y="4" width="1" height="2"/><rect x="21" y="4" width="1" height="2"/></g>
+          <g fill="#f8dd94"><rect x="12" y="3" width="4" height="1"/><rect x="11" y="4" width="1" height="1"/></g>
+          <!-- wings -->
+          <g fill="#2a2140"><rect x="3" y="12" width="6" height="1"/><rect x="2" y="13" width="1" height="8"/><rect x="3" y="21" width="6" height="1"/><rect x="8" y="13" width="1" height="8"/><rect x="23" y="12" width="6" height="1"/><rect x="29" y="13" width="1" height="8"/><rect x="23" y="21" width="6" height="1"/><rect x="23" y="13" width="1" height="8"/></g>
+          <g fill="#3d3355"><rect x="3" y="13" width="5" height="8"/><rect x="24" y="13" width="5" height="8"/></g>
+          <g fill="#584a78"><rect x="4" y="14" width="3" height="5"/><rect x="25" y="14" width="3" height="5"/></g>
+          <!-- body -->
+          <g fill="#2a2140"><rect x="11" y="9" width="10" height="1"/><rect x="10" y="10" width="1" height="2"/><rect x="21" y="10" width="1" height="2"/><rect x="9" y="12" width="1" height="8"/><rect x="22" y="12" width="1" height="8"/><rect x="10" y="20" width="1" height="2"/><rect x="21" y="20" width="1" height="2"/><rect x="11" y="22" width="3" height="1"/><rect x="18" y="22" width="3" height="1"/><rect x="13" y="23" width="6" height="1"/></g>
+          <g fill="#7c6bb0"><rect x="11" y="10" width="10" height="2"/><rect x="10" y="12" width="12" height="8"/><rect x="11" y="20" width="10" height="2"/><rect x="14" y="22" width="4" height="1"/></g>
+          <g fill="#9b89cc"><rect x="12" y="10" width="8" height="2"/><rect x="11" y="12" width="6" height="2"/></g>
+          <g fill="#c4b3e8"><rect x="13" y="10" width="4" height="1"/><rect x="12" y="11" width="3" height="1"/></g>
+          <!-- face -->
+          <g fill="#ffffff"><rect x="11" y="14" width="4" height="5"/><rect x="17" y="14" width="4" height="5"/></g>
+          <g fill="#241f33"><rect x="12" y="15" width="2" height="3"/><rect x="18" y="15" width="2" height="3"/></g>
+          <g fill="#ffffff"><rect x="12" y="15" width="1" height="1"/><rect x="18" y="15" width="1" height="1"/></g>
+          <g fill="#f2879f"><rect x="9" y="18" width="2" height="1"/><rect x="21" y="18" width="2" height="1"/></g>
+          <g fill="#241f33"><rect x="15" y="19" width="2" height="1"/></g>
+          <!-- sparkle -->
+          <g fill="#8b86a8"><rect x="27" y="24" width="1" height="3"/><rect x="26" y="25" width="3" height="1"/></g>
         </svg>
         <div class="brand-name">PIP<span>GARDEN</span></div>
       </div>
@@ -446,8 +399,8 @@
         </div>
 
         <div class="clocks-foot">
-          An egg every <b>5 minutes</b> of earning time. Look away for 20 seconds and the right-hand
-          clock stops — the left one carries on regardless.
+          An egg every <b>5 minutes</b> of earning time. Switch to another window for 20 seconds and the
+          right-hand clock stops — the left one carries on regardless.
         </div>
       </div>
     </div>
@@ -464,8 +417,8 @@
           <span class="rule-num">The gap is the point</span>
           <h3>Distraction costs rewards, never time</h3>
           <p>
-            Twenty seconds on your phone or in another window and earning freezes. Come back and
-            it resumes. The session itself runs to the end either way, so quitting is never the
+            Twenty seconds in another window and earning freezes. Come back and it resumes.
+            The session itself runs to the end either way, so quitting early is never the
             cheaper option.
           </p>
         </article>
@@ -530,69 +483,6 @@
         <a class="btn btn-ghost" href="#get" id="download-portable">Portable version</a>
       </div>
 
-    </section>
-
-    <!-- ---------------------------------------------------------- warning -->
-    <section aria-labelledby="warn-h" style="padding-top: 0;">
-      <div class="heads-up">
-        <h3 id="warn-h">Windows will warn you. That's expected.</h3>
-        <p>
-          PipGarden isn't code-signed — a certificate costs a few hundred pounds a year, and this
-          is a small project. Windows shows the same warning for every unsigned app, so here is
-          exactly what you'll see and what to do:
-        </p>
-        <ol class="steps">
-          <li>A blue box appears: <b>"Windows protected your PC"</b>.</li>
-          <li>Click <b>More info</b> — it's small text, easy to miss.</li>
-          <li>Click <b>Run anyway</b>.</li>
-        </ol>
-        <p class="muted">
-          Don't turn SmartScreen off. It's doing its job; it just can't tell an unknown app from
-          a bad one.
-        </p>
-      </div>
-    </section>
-
-    <!-- ----------------------------------------------------------- camera -->
-    <section aria-labelledby="cam-h">
-      <div class="section-head">
-        <span class="eyebrow">Optional</span>
-        <h2 id="cam-h">The camera check, if you want it.</h2>
-      </div>
-
-      <div class="optional">
-        <div style="display: grid; gap: 1.25rem;">
-          <p class="lede" style="font-size: 1rem;">
-            PipGarden can use your webcam to tell whether you're actually at your desk and off
-            your phone. It runs in a separate process that has no network access and never writes
-            a frame to disk — the only thing that leaves it is two true/false values a second.
-          </p>
-          <p class="muted">
-            It needs Python on your machine. Without it, everything still works — the honesty
-            check is just weaker, so the earning rate is lower and the app says so plainly.
-          </p>
-          <pre><span class="c"># from the app's install folder, in resources/vision</span>
-pip install -r requirements.txt
-pip install -r requirements-export.txt
-python export_model.py</pre>
-        </div>
-
-        <div class="rate">
-          <div class="rate-row full">
-            <span>With the camera</span>
-            <b>100%</b>
-          </div>
-          <div class="rate-row reduced">
-            <span>Without it</span>
-            <b>60%</b>
-          </div>
-          <div class="rate-row">
-            <span style="color: var(--dim); font-size: .84rem;">
-              Earning rate. Nothing else changes, and the camera never switches itself on.
-            </span>
-          </div>
-        </div>
-      </div>
     </section>
 
     <footer>
@@ -714,7 +604,7 @@ python export_model.py</pre>
 
       stateEl.className = "clock-state " + (paused ? "frozen" : "running");
       stateEl.innerHTML =
-        '<i class="pip-dot"></i>' + (paused ? "Paused — you looked away" : "Counting");
+        '<i class="pip-dot"></i>' + (paused ? "Paused — you left the app" : "Counting");
     }, 1000);
   })();
 </script>
