@@ -422,11 +422,7 @@
           that installs nothing.
         </p>
 
-        <p class="unwired-note" data-unwired-note hidden>
-          <b>The download isn't live yet.</b> The installer exists but hasn't been uploaded
-          anywhere. Publish it, then set <code>DOWNLOAD</code> at the top of this page's script
-          to the two file URLs.
-        </p>
+
       </div>
 
       <!-- The live demonstration. This is the hero, not decoration. -->
@@ -512,8 +508,8 @@
         <div class="spec">
           <dt>Portable</dt>
           <dd>
-            <b>PipGarden-Portable.exe</b> — one file, runs from anywhere, installs nothing.
-            Delete it to remove it. 99 MB.
+            One file, runs from anywhere, installs nothing — delete it to remove it.
+            Not published yet; use the installer for now.
           </dd>
         </div>
         <div class="spec">
@@ -534,10 +530,6 @@
         <a class="btn btn-ghost" href="#get" id="download-portable">Portable version</a>
       </div>
 
-      <p class="unwired-note" data-unwired-note hidden style="margin-top: 1.25rem;">
-        <b>Not hosted yet.</b> These buttons stay inert until the files are somewhere a browser
-        can reach — better than a link that 404s at whoever you sent it to.
-      </p>
     </section>
 
     <!-- ---------------------------------------------------------- warning -->
@@ -615,12 +607,17 @@ python export_model.py</pre>
   /* ------------------------------------------------------------ download links
      One place to change when the binaries are hosted. Point these at the
      GitHub Release assets (or any static host) and the whole page updates. */
+  // `/releases/latest/download/` rather than a pinned tag: these links keep
+  // working on every future release without this page being edited again.
+  const RELEASES = "https://github.com/SishirKotra/pipgarden1/releases";
   const DOWNLOAD = {
-    installer: "https://github.com/YOUR-USERNAME/pipgarden/releases/latest/download/PipGarden-Setup.exe",
-    portable:  "https://github.com/YOUR-USERNAME/pipgarden/releases/latest/download/PipGarden-Portable.exe",
+    installer: `${RELEASES}/latest/download/PipGarden-Setup.exe`,
+    // Not published yet. Left null rather than pointed at a file that 404s.
+    portable: null,
   };
 
-  const configured = !DOWNLOAD.installer.includes("YOUR-USERNAME");
+  const configured =
+    typeof DOWNLOAD.installer === "string" && !DOWNLOAD.installer.includes("YOUR-USERNAME");
 
   for (const [id, url] of [
     ["download", DOWNLOAD.installer],
@@ -629,18 +626,19 @@ python export_model.py</pre>
   ]) {
     const el = document.getElementById(id);
     if (!el) continue;
-    if (configured) {
+    if (configured && url) {
       // A plain link, deliberately. The `download` attribute is ignored on a
       // cross-origin URL, and GitHub Releases already sends the file with
       // `Content-Disposition: attachment`, so the browser saves it either way.
       el.href = url;
       continue;
     }
-    // Not hosted yet. A button that looks live and does nothing is worse than
-    // one that admits it — say so on the button and stop it swallowing clicks.
+    // Nothing behind this one. A button that looks live and does nothing is
+    // worse than one that admits it — say so, and stop it swallowing clicks.
     el.classList.add("is-unwired");
     el.setAttribute("aria-disabled", "true");
     el.addEventListener("click", (e) => e.preventDefault());
+    if (id === "download-portable") el.textContent = "Portable version — coming soon";
   }
 
   if (!configured) {
