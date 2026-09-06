@@ -1,0 +1,722 @@
+<title>PipGarden</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Outfit:wght@400;500;600;700&display=swap">
+
+<style>
+  /* ------------------------------------------------------------------ tokens
+     Taken from the app's own theme so the site and the product read as one
+     thing. This page commits to a single dark world on purpose: PipGarden is a
+     nighttime study app, and a light version of this page would be a different
+     product. Every colour is therefore painted explicitly. */
+  :root {
+    color-scheme: dark;
+
+    --night:      #0b0a16;
+    --night-2:    #100e22;
+    --panel:      #171430;
+    --panel-lit:  #1e1a3d;
+    --sunk:       #0c0a1c;
+
+    --edge:       #2a2450;
+    --edge-lit:   #3d3470;
+
+    --violet:     #7c62b0;
+    --violet-lit: #a184d4;
+    --violet-pale:#cbb8f0;
+
+    --mint:       #57a05c;
+    --mint-lit:   #7cc478;
+    --gold:       #ffd166;
+    --rose:       #ff8fa8;
+
+    --cream:      #e8e4f4;
+    --lav:        #a79dc9;
+    --dim:        #6f6790;
+
+    --pixel: "Press Start 2P", "Courier New", monospace;
+    --body: "Outfit", ui-sans-serif, system-ui, sans-serif;
+
+    --gap: clamp(3.5rem, 8vw, 6rem);
+    --edge-pad: clamp(1.25rem, 5vw, 4.5rem);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--night);
+    color: var(--cream);
+    font-family: var(--body);
+    font-size: 1rem;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Ambient night. Fixed so it does not scroll with the content. */
+  .sky {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(1100px 620px at 12% -8%, rgba(124, 98, 176, .20), transparent 62%),
+      radial-gradient(900px 520px at 92% 4%, rgba(87, 160, 92, .10), transparent 58%),
+      var(--night);
+  }
+  .stars { position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: .55; }
+
+  .page { position: relative; z-index: 1; }
+
+  .wrap {
+    max-width: 78rem;
+    margin: 0 auto;
+    padding-inline: var(--edge-pad);
+  }
+
+  /* ---------------------------------------------------------------- typography */
+  .pixel { font-family: var(--pixel); font-weight: 400; letter-spacing: .02em; }
+
+  .eyebrow {
+    font-family: var(--pixel);
+    font-size: .5rem;
+    letter-spacing: .16em;
+    color: var(--violet-lit);
+    text-transform: uppercase;
+  }
+
+  h1 {
+    font-family: var(--pixel);
+    font-size: clamp(1.9rem, 5.6vw, 3.4rem);
+    line-height: 1.22;
+    margin: 0;
+    text-wrap: balance;
+    text-shadow: 0 0 34px rgba(161, 132, 212, .42);
+  }
+
+  h2 {
+    font-family: var(--pixel);
+    font-size: clamp(.95rem, 2vw, 1.2rem);
+    line-height: 1.5;
+    margin: 0;
+    text-wrap: balance;
+  }
+
+  h3 { font-size: 1.05rem; font-weight: 700; margin: 0; letter-spacing: -.005em; }
+
+  p { margin: 0; max-width: 62ch; }
+  .lede { font-size: clamp(1.02rem, 1.6vw, 1.2rem); color: var(--lav); }
+  .muted { color: var(--dim); font-size: .92rem; }
+
+  /* ---------------------------------------------------------------- header */
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding-block: 1.5rem;
+    flex-wrap: wrap;
+  }
+  .brand { display: flex; align-items: center; gap: .8rem; }
+  .brand-name { font-family: var(--pixel); font-size: .82rem; line-height: 1.35; }
+  .brand-name span { display: block; color: var(--violet-lit); }
+  .header-note { font-size: .85rem; color: var(--dim); }
+
+  /* ---------------------------------------------------------------- hero */
+  .hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: clamp(2.25rem, 5vw, 3.5rem);
+    padding-block: clamp(2rem, 5vw, 3.5rem) var(--gap);
+    align-items: center;
+  }
+  @media (min-width: 62rem) {
+    .hero { grid-template-columns: minmax(0, 1.05fr) minmax(21rem, .95fr); }
+  }
+
+  .hero-copy { display: grid; gap: 1.5rem; justify-items: start; }
+
+  /* ------------------------------------------------------- the two clocks
+     The thesis of the whole product, running live. Focus never stops; earning
+     freezes. Everything else on this page is downstream of that. */
+  .clocks {
+    border: 2px solid var(--edge);
+    border-radius: 14px;
+    background: linear-gradient(180deg, var(--panel-lit), var(--panel));
+    box-shadow: 0 26px 60px -30px #000, inset 0 1px 0 rgba(255,255,255,.05);
+    overflow: hidden;
+  }
+  .clocks-head {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 1rem; padding: .85rem 1.1rem;
+    border-bottom: 2px solid var(--edge);
+    background: var(--sunk);
+  }
+  .dots { display: flex; gap: .38rem; }
+  .dots i { width: .5rem; height: .5rem; border-radius: 50%; background: var(--edge-lit); }
+
+  .clock-grid { display: grid; grid-template-columns: 1fr 1fr; }
+  .clock { padding: 1.5rem 1.1rem 1.35rem; display: grid; gap: .55rem; }
+  .clock + .clock { border-left: 2px solid var(--edge); }
+  .clock-label {
+    font-family: var(--pixel); font-size: .45rem; letter-spacing: .14em;
+    color: var(--dim); text-transform: uppercase;
+  }
+  .clock-time {
+    font-family: var(--pixel);
+    font-size: clamp(1.35rem, 4.4vw, 1.85rem);
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+  }
+  .clock-time.is-focus { color: var(--cream); }
+  .clock-time.is-earning { color: var(--mint-lit); transition: color .25s ease; }
+  .clock-time.is-earning[data-paused="true"] { color: var(--rose); }
+
+  .clock-state {
+    font-family: var(--pixel); font-size: .45rem; letter-spacing: .12em;
+    display: inline-flex; align-items: center; gap: .4rem;
+  }
+  .clock-state.running { color: var(--mint-lit); }
+  .clock-state.frozen  { color: var(--rose); }
+  .pip-dot { width: .42rem; height: .42rem; border-radius: 50%; background: currentColor; }
+
+  .clocks-foot {
+    padding: .9rem 1.1rem;
+    border-top: 2px solid var(--edge);
+    background: var(--sunk);
+    font-size: .84rem;
+    color: var(--lav);
+  }
+  .clocks-foot b { color: var(--cream); font-weight: 600; }
+
+  /* ---------------------------------------------------------------- buttons */
+  .cta-row { display: flex; flex-wrap: wrap; gap: .9rem 1.1rem; align-items: center; }
+
+  .btn {
+    font-family: var(--pixel);
+    font-size: .68rem;
+    letter-spacing: .04em;
+    text-decoration: none;
+    padding: 1.05rem 1.6rem;
+    border-radius: 10px;
+    display: inline-flex; align-items: center; gap: .7rem;
+    border: 2px solid transparent;
+    transition: transform .12s ease, box-shadow .12s ease, background .15s ease;
+  }
+  .btn-primary {
+    background: var(--mint-lit);
+    color: #0d2416;
+    border-color: var(--mint-lit);
+    box-shadow: 0 4px 0 #2f6b3f, 0 0 40px -12px var(--mint-lit);
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 0 #2f6b3f, 0 0 46px -8px var(--mint-lit); }
+  .btn-primary:active { transform: translateY(2px); box-shadow: 0 1px 0 #2f6b3f; }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--violet-pale);
+    border-color: var(--edge-lit);
+  }
+  .btn-ghost:hover { background: rgba(124, 98, 176, .14); transform: translateY(-2px); }
+
+  .btn-sub { font-size: .84rem; color: var(--dim); font-family: var(--body); }
+  .btn-sub b { color: var(--lav); font-weight: 600; }
+
+  /* Download links before the binaries are hosted anywhere. */
+  .btn.is-unwired {
+    background: var(--panel-lit);
+    color: var(--dim);
+    border-color: var(--edge);
+    border-style: dashed;
+    box-shadow: none;
+    cursor: not-allowed;
+  }
+  .btn.is-unwired:hover { transform: none; box-shadow: none; }
+
+  .unwired-note {
+    border: 2px dashed var(--edge-lit);
+    border-radius: 10px;
+    background: rgba(124, 98, 176, .08);
+    padding: .95rem 1.1rem;
+    font-size: .88rem;
+    color: var(--lav);
+    max-width: 44ch;
+  }
+  .unwired-note b { color: var(--violet-pale); font-weight: 600; }
+  .unwired-note code {
+    font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+    font-size: .82em;
+    color: var(--mint-lit);
+  }
+
+  a:focus-visible, button:focus-visible {
+    outline: 3px solid var(--violet-lit);
+    outline-offset: 3px;
+  }
+
+  /* ---------------------------------------------------------------- sections */
+  section { padding-block: var(--gap); }
+  .section-head { display: grid; gap: .85rem; margin-bottom: 2.5rem; max-width: 46rem; }
+
+  /* Three panels, weighted rather than three identical cards: the first is the
+     one that changes how the app feels, so it carries the accent. */
+  .rules { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); }
+  .rule {
+    border: 2px solid var(--edge);
+    border-radius: 12px;
+    padding: 1.5rem 1.4rem;
+    background: var(--panel);
+    display: grid; gap: .7rem; align-content: start;
+  }
+  .rule.lead {
+    border-color: var(--violet);
+    background: linear-gradient(180deg, rgba(124,98,176,.16), var(--panel));
+  }
+  .rule-num {
+    font-family: var(--pixel); font-size: .5rem; letter-spacing: .1em;
+    color: var(--violet-lit);
+  }
+  .rule p { font-size: .93rem; color: var(--lav); }
+
+  /* ------------------------------------------------------ honest warning
+     Not hidden in small print. Someone who hits SmartScreen unprepared closes
+     the window and never comes back. */
+  .heads-up {
+    border: 2px solid var(--gold);
+    border-radius: 12px;
+    background: linear-gradient(180deg, rgba(255, 209, 102, .11), rgba(255, 209, 102, .04));
+    padding: 1.6rem 1.5rem;
+    display: grid; gap: 1rem;
+  }
+  .heads-up h3 { color: var(--gold); font-family: var(--pixel); font-size: .78rem; line-height: 1.5; }
+  .heads-up p { color: var(--lav); font-size: .95rem; }
+  .steps { margin: 0; padding-left: 1.15rem; display: grid; gap: .45rem; color: var(--lav); font-size: .95rem; }
+  .steps b { color: var(--cream); font-weight: 600; }
+
+  /* ---------------------------------------------------------------- specs */
+  .specs { display: grid; gap: 0; border: 2px solid var(--edge); border-radius: 12px; overflow: hidden; }
+  .spec {
+    display: grid; grid-template-columns: minmax(9rem, 14rem) 1fr;
+    gap: 1rem 1.5rem; padding: 1rem 1.4rem;
+    background: var(--panel);
+    align-items: baseline;
+  }
+  .spec + .spec { border-top: 2px solid var(--edge); }
+  .spec dt {
+    font-family: var(--pixel); font-size: .45rem; letter-spacing: .12em;
+    color: var(--dim); text-transform: uppercase;
+  }
+  .spec dd { margin: 0; font-size: .95rem; color: var(--lav); }
+  .spec dd b { color: var(--cream); font-weight: 600; }
+  @media (max-width: 34rem) { .spec { grid-template-columns: 1fr; gap: .35rem; } }
+
+  /* ---------------------------------------------------------------- camera */
+  .optional {
+    display: grid; gap: 1.75rem;
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+  }
+  @media (min-width: 56rem) { .optional { grid-template-columns: minmax(0, 1fr) minmax(18rem, 22rem); } }
+
+  pre {
+    margin: 0;
+    background: var(--sunk);
+    border: 2px solid var(--edge);
+    border-radius: 10px;
+    padding: 1.1rem 1.2rem;
+    overflow-x: auto;
+    font-size: .84rem;
+    line-height: 1.75;
+    color: var(--mint-lit);
+    font-family: ui-monospace, "Cascadia Code", "Consolas", monospace;
+  }
+  pre .c { color: var(--dim); }
+
+  .rate {
+    border: 2px solid var(--edge); border-radius: 12px;
+    background: var(--panel); overflow: hidden;
+  }
+  .rate-row { display: flex; justify-content: space-between; gap: 1rem; padding: .95rem 1.2rem; align-items: baseline; }
+  .rate-row + .rate-row { border-top: 2px solid var(--edge); }
+  .rate-row span { font-size: .9rem; color: var(--lav); }
+  .rate-row b { font-family: var(--pixel); font-size: .72rem; font-variant-numeric: tabular-nums; }
+  .rate-row.full b { color: var(--mint-lit); }
+  .rate-row.reduced b { color: var(--gold); }
+
+  /* ---------------------------------------------------------------- footer */
+  footer {
+    border-top: 2px solid var(--edge);
+    padding-block: 2.5rem 3rem;
+    display: flex; flex-wrap: wrap; gap: 1rem 2rem;
+    align-items: center; justify-content: space-between;
+  }
+  .foot-mark { font-family: var(--pixel); font-size: .5rem; letter-spacing: .12em; color: var(--dim); }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; }
+  }
+</style>
+
+<div class="sky"></div>
+<canvas class="stars" id="stars" aria-hidden="true"></canvas>
+
+<div class="page">
+  <div class="wrap">
+
+    <header>
+      <div class="brand">
+        <!-- The app's own Pip, drawn at 1:1 with the same palette as the icon. -->
+        <svg width="40" height="40" viewBox="0 0 32 32" shape-rendering="crispEdges" aria-hidden="true">
+          <g fill="#251a3b">
+            <rect x="6" y="12" width="20" height="2"/><rect x="4" y="14" width="24" height="12"/>
+            <rect x="6" y="26" width="20" height="2"/>
+          </g>
+          <g fill="#7c62b0"><rect x="6" y="14" width="20" height="11"/></g>
+          <g fill="#a184d4"><rect x="7" y="14" width="14" height="4"/></g>
+          <g fill="#cbb8f0"><rect x="9" y="15" width="4" height="1"/><rect x="9" y="16" width="3" height="1"/></g>
+          <g fill="#ffffff">
+            <rect x="8" y="17" width="4" height="5"/><rect x="7" y="18" width="1" height="3"/><rect x="12" y="18" width="1" height="3"/>
+            <rect x="19" y="17" width="4" height="5"/><rect x="18" y="18" width="1" height="3"/><rect x="23" y="18" width="1" height="3"/>
+          </g>
+          <g fill="#201b2e">
+            <rect x="9" y="18" width="2" height="3"/><rect x="20" y="18" width="2" height="3"/>
+          </g>
+          <g fill="#ffffff"><rect x="9" y="18" width="1" height="1"/><rect x="20" y="18" width="1" height="1"/></g>
+          <g fill="#ff8fa8"><rect x="5" y="22" width="2" height="1"/><rect x="25" y="22" width="2" height="1"/></g>
+          <g fill="#201b2e"><rect x="15" y="23" width="2" height="1"/><rect x="14" y="22" width="1" height="1"/><rect x="17" y="22" width="1" height="1"/></g>
+          <g fill="#ffd166">
+            <rect x="4" y="4" width="1" height="5"/><rect x="2" y="6" width="5" height="1"/>
+            <rect x="26" y="2" width="1" height="5"/><rect x="24" y="4" width="5" height="1"/>
+          </g>
+        </svg>
+        <div class="brand-name">PIP<span>GARDEN</span></div>
+      </div>
+      <div class="header-note">Windows 10 &amp; 11 · free · no account needed</div>
+    </header>
+
+    <!-- ------------------------------------------------------------- hero -->
+    <div class="hero">
+      <div class="hero-copy">
+        <div class="eyebrow">Two clocks, one session</div>
+        <h1>Your focus timer<br>never stops.</h1>
+        <p class="lede">
+          Only one of them pays. Sit down, start a session, and the focus clock runs to the end
+          no matter what. The earning clock freezes the moment you wander off — and everything
+          you collect comes from that second number.
+        </p>
+
+        <div class="cta-row">
+          <a class="btn btn-primary" id="download" href="#get">
+            <svg width="14" height="14" viewBox="0 0 12 12" fill="currentColor" shape-rendering="crispEdges" aria-hidden="true">
+              <rect x="5" y="1" width="2" height="6"/><rect x="3" y="5" width="2" height="2"/>
+              <rect x="7" y="5" width="2" height="2"/><rect x="4" y="7" width="4" height="1"/>
+              <rect x="1" y="9" width="10" height="2"/>
+            </svg>
+            Download for Windows
+          </a>
+          <span class="btn-sub">Installer · <b>100 MB</b> · v0.1.0</span>
+        </div>
+
+        <p class="muted">
+          Also available as a <a href="#get" style="color: var(--violet-pale);">portable file</a>
+          that installs nothing.
+        </p>
+
+        <p class="unwired-note" data-unwired-note hidden>
+          <b>The download isn't live yet.</b> The installer exists but hasn't been uploaded
+          anywhere. Publish it, then set <code>DOWNLOAD</code> at the top of this page's script
+          to the two file URLs.
+        </p>
+      </div>
+
+      <!-- The live demonstration. This is the hero, not decoration. -->
+      <div class="clocks" role="img" aria-label="A demonstration of the two clocks: the focus clock keeps counting while the earning clock freezes when you look away.">
+        <div class="clocks-head">
+          <div class="dots"><i></i><i></i><i></i></div>
+          <span class="clock-label">Live session</span>
+        </div>
+
+        <div class="clock-grid">
+          <div class="clock">
+            <span class="clock-label">Focus time</span>
+            <span class="clock-time is-focus" id="focus">18:42</span>
+            <span class="clock-state running"><i class="pip-dot"></i>Never stops</span>
+          </div>
+          <div class="clock">
+            <span class="clock-label">Earning time</span>
+            <span class="clock-time is-earning" id="earning" data-paused="false">16:07</span>
+            <span class="clock-state running" id="earning-state"><i class="pip-dot"></i>Counting</span>
+          </div>
+        </div>
+
+        <div class="clocks-foot">
+          An egg every <b>5 minutes</b> of earning time. Look away for 20 seconds and the right-hand
+          clock stops — the left one carries on regardless.
+        </div>
+      </div>
+    </div>
+
+    <!-- ------------------------------------------------------------ rules -->
+    <section aria-labelledby="how">
+      <div class="section-head">
+        <span class="eyebrow">How a session works</span>
+        <h2 id="how">Three rules, and the app is built entirely out of them.</h2>
+      </div>
+
+      <div class="rules">
+        <article class="rule lead">
+          <span class="rule-num">The gap is the point</span>
+          <h3>Distraction costs rewards, never time</h3>
+          <p>
+            Twenty seconds on your phone or in another window and earning freezes. Come back and
+            it resumes. The session itself runs to the end either way, so quitting is never the
+            cheaper option.
+          </p>
+        </article>
+
+        <article class="rule">
+          <span class="rule-num">Before 30 minutes</span>
+          <h3>Leave early and the session is lost</h3>
+          <p>
+            Coins, eggs and Pips from that session go with it. Past thirty minutes you keep half
+            the coins and two Pips. Anything already in your garden is never touched.
+          </p>
+        </article>
+
+        <article class="rule">
+          <span class="rule-num">Afterwards</span>
+          <h3>Eggs hatch on your breaks</h3>
+          <p>
+            Never mid-work-block. Twenty species across six rarities, and the ones you bring into
+            a session earn alongside you in a small garden under the timer.
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <!-- -------------------------------------------------------------- get -->
+    <section id="get" aria-labelledby="get-h">
+      <div class="section-head">
+        <span class="eyebrow">Download</span>
+        <h2 id="get-h">Two ways to run it.</h2>
+      </div>
+
+      <dl class="specs">
+        <div class="spec">
+          <dt>Installer</dt>
+          <dd>
+            <b>PipGarden-Setup.exe</b> — adds a Start-menu entry, a desktop shortcut and an
+            uninstaller. 100 MB.
+          </dd>
+        </div>
+        <div class="spec">
+          <dt>Portable</dt>
+          <dd>
+            <b>PipGarden-Portable.exe</b> — one file, runs from anywhere, installs nothing.
+            Delete it to remove it. 99 MB.
+          </dd>
+        </div>
+        <div class="spec">
+          <dt>Requires</dt>
+          <dd>Windows 10 or 11, 64-bit. No account, no sign-up, works offline.</dd>
+        </div>
+        <div class="spec">
+          <dt>Your data</dt>
+          <dd>
+            Everything stays on your PC. Coins, Pips and streaks live in your own
+            <b>%APPDATA%\PipGarden</b> folder and are never uploaded.
+          </dd>
+        </div>
+      </dl>
+
+      <div style="margin-top: 2rem;" class="cta-row">
+        <a class="btn btn-primary" href="#get" id="download-2">Download installer</a>
+        <a class="btn btn-ghost" href="#get" id="download-portable">Portable version</a>
+      </div>
+
+      <p class="unwired-note" data-unwired-note hidden style="margin-top: 1.25rem;">
+        <b>Not hosted yet.</b> These buttons stay inert until the files are somewhere a browser
+        can reach — better than a link that 404s at whoever you sent it to.
+      </p>
+    </section>
+
+    <!-- ---------------------------------------------------------- warning -->
+    <section aria-labelledby="warn-h" style="padding-top: 0;">
+      <div class="heads-up">
+        <h3 id="warn-h">Windows will warn you. That's expected.</h3>
+        <p>
+          PipGarden isn't code-signed — a certificate costs a few hundred pounds a year, and this
+          is a small project. Windows shows the same warning for every unsigned app, so here is
+          exactly what you'll see and what to do:
+        </p>
+        <ol class="steps">
+          <li>A blue box appears: <b>"Windows protected your PC"</b>.</li>
+          <li>Click <b>More info</b> — it's small text, easy to miss.</li>
+          <li>Click <b>Run anyway</b>.</li>
+        </ol>
+        <p class="muted">
+          Don't turn SmartScreen off. It's doing its job; it just can't tell an unknown app from
+          a bad one.
+        </p>
+      </div>
+    </section>
+
+    <!-- ----------------------------------------------------------- camera -->
+    <section aria-labelledby="cam-h">
+      <div class="section-head">
+        <span class="eyebrow">Optional</span>
+        <h2 id="cam-h">The camera check, if you want it.</h2>
+      </div>
+
+      <div class="optional">
+        <div style="display: grid; gap: 1.25rem;">
+          <p class="lede" style="font-size: 1rem;">
+            PipGarden can use your webcam to tell whether you're actually at your desk and off
+            your phone. It runs in a separate process that has no network access and never writes
+            a frame to disk — the only thing that leaves it is two true/false values a second.
+          </p>
+          <p class="muted">
+            It needs Python on your machine. Without it, everything still works — the honesty
+            check is just weaker, so the earning rate is lower and the app says so plainly.
+          </p>
+          <pre><span class="c"># from the app's install folder, in resources/vision</span>
+pip install -r requirements.txt
+pip install -r requirements-export.txt
+python export_model.py</pre>
+        </div>
+
+        <div class="rate">
+          <div class="rate-row full">
+            <span>With the camera</span>
+            <b>100%</b>
+          </div>
+          <div class="rate-row reduced">
+            <span>Without it</span>
+            <b>60%</b>
+          </div>
+          <div class="rate-row">
+            <span style="color: var(--dim); font-size: .84rem;">
+              Earning rate. Nothing else changes, and the camera never switches itself on.
+            </span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <span class="foot-mark">© PIPGARDEN · STAY FOCUSED, LEVEL UP</span>
+      <span class="muted">Made for people who keep opening the wrong tab.</span>
+    </footer>
+
+  </div>
+</div>
+
+<script>
+  /* ------------------------------------------------------------ download links
+     One place to change when the binaries are hosted. Point these at the
+     GitHub Release assets (or any static host) and the whole page updates. */
+  const DOWNLOAD = {
+    installer: "https://github.com/YOUR-USERNAME/pipgarden/releases/latest/download/PipGarden-Setup.exe",
+    portable:  "https://github.com/YOUR-USERNAME/pipgarden/releases/latest/download/PipGarden-Portable.exe",
+  };
+
+  const configured = !DOWNLOAD.installer.includes("YOUR-USERNAME");
+
+  for (const [id, url] of [
+    ["download", DOWNLOAD.installer],
+    ["download-2", DOWNLOAD.installer],
+    ["download-portable", DOWNLOAD.portable],
+  ]) {
+    const el = document.getElementById(id);
+    if (!el) continue;
+    if (configured) {
+      // A plain link, deliberately. The `download` attribute is ignored on a
+      // cross-origin URL, and GitHub Releases already sends the file with
+      // `Content-Disposition: attachment`, so the browser saves it either way.
+      el.href = url;
+      continue;
+    }
+    // Not hosted yet. A button that looks live and does nothing is worse than
+    // one that admits it — say so on the button and stop it swallowing clicks.
+    el.classList.add("is-unwired");
+    el.setAttribute("aria-disabled", "true");
+    el.addEventListener("click", (e) => e.preventDefault());
+  }
+
+  if (!configured) {
+    document.querySelectorAll("[data-unwired-note]").forEach((n) => {
+      n.hidden = false;
+    });
+  }
+
+  /* ---------------------------------------------------------------- starfield */
+  (function stars() {
+    const c = document.getElementById("stars");
+    const ctx = c.getContext("2d");
+    let w = 0, h = 0, pts = [];
+
+    function seed() {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      w = c.width = Math.floor(innerWidth * dpr);
+      h = c.height = Math.floor(innerHeight * dpr);
+      c.style.width = innerWidth + "px";
+      c.style.height = innerHeight + "px";
+      const count = Math.round((innerWidth * innerHeight) / 14000);
+      pts = Array.from({ length: count }, () => ({
+        x: Math.random() * w,
+        y: Math.random() * h * 0.85,
+        s: Math.random() < 0.14 ? 2 * dpr : 1 * dpr,
+        a: 0.18 + Math.random() * 0.5,
+      }));
+      draw();
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, w, h);
+      for (const p of pts) {
+        ctx.fillStyle = `rgba(203, 184, 240, ${p.a})`;
+        ctx.fillRect(p.x, p.y, p.s, p.s);
+      }
+    }
+
+    seed();
+    addEventListener("resize", seed);
+  })();
+
+  /* -------------------------------------------------------------- the clocks
+     The product in miniature. Focus counts up without interruption; earning
+     runs for a while, then freezes, then resumes — which is exactly what
+     happens when you alt-tab away and come back. */
+  (function twoClocks() {
+    const focusEl = document.getElementById("focus");
+    const earnEl = document.getElementById("earning");
+    const stateEl = document.getElementById("earning-state");
+    const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (still) return; // the markup already shows a sensible resting state
+
+    const mmss = (s) =>
+      String(Math.floor(s / 60)).padStart(2, "0") + ":" + String(s % 60).padStart(2, "0");
+
+    let focus = 18 * 60 + 42;
+    let earning = 16 * 60 + 7;
+    let tick = 0;
+
+    setInterval(() => {
+      tick += 1;
+      focus += 1;
+
+      // Eleven seconds counting, four frozen. Long enough to notice, short
+      // enough that a visitor sees the whole cycle without waiting.
+      const paused = tick % 15 >= 11;
+      if (!paused) earning += 1;
+
+      focusEl.textContent = mmss(focus);
+      earnEl.textContent = mmss(earning);
+      earnEl.dataset.paused = String(paused);
+
+      stateEl.className = "clock-state " + (paused ? "frozen" : "running");
+      stateEl.innerHTML =
+        '<i class="pip-dot"></i>' + (paused ? "Paused — you looked away" : "Counting");
+    }, 1000);
+  })();
+</script>
